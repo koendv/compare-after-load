@@ -1,6 +1,6 @@
 # Compare sections after load
 
-This is a small patch to gdb, that automatically checks a program was flashed correctly.
+This is a small patch to [gdb](https://www.sourceware.org/gdb/), that automatically checks a program was flashed correctly.
 
 An example:
 
