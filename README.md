@@ -2,6 +2,24 @@
 
 This is a small patch to [gdb](https://www.sourceware.org/gdb/), that automatically checks a program was flashed correctly.
 
+After this patch, switch checking flash on with:
+```
+set remote compare_sections_after_load on
+```
+
+With  `remote compare_sections_after_load` set, if `load` ends with the message
+```
+sections matched.
+```
+then all went well.
+
+If `load` ends with a message like:
+```
+Section .text, range 0x800010c -- 0x8002160: MIS-MATCHED!
+warning: One or more sections of the target image does not match the loaded file
+```
+then you need to investigate.
+
 An example:
 
 ```
@@ -20,12 +38,7 @@ Loading section .fini_array, size 0xc lma 0x8001f74
 Loading section .data, size 0x70 lma 0x8001f80
 Start address 0x080015e8, load size 8176
 Transfer rate: 17 KB/sec, 628 bytes/write.
-Section .isr_vector, range 0x8000000 -- 0x800010c: matched.
-Section .text, range 0x800010c -- 0x8001c50: matched.
-Section .rodata, range 0x8001c50 -- 0x8001f60: matched.
-Section .init_array, range 0x8001f60 -- 0x8001f74: matched.
-Section .fini_array, range 0x8001f74 -- 0x8001f80: matched.
-Section .data, range 0x8001f80 -- 0x8001ff0: matched.
+sections matched.
 (gdb) 
 ```
 

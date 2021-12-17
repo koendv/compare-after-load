@@ -1,5 +1,5 @@
 diff --git a/gdb/remote.c b/gdb/remote.c
-index 1f977d57fba..756c7baa2f8 100644
+index 1f977d57fba..0078335f16a 100644
 --- a/gdb/remote.c
 +++ b/gdb/remote.c
 @@ -1609,6 +1609,16 @@ show_interrupt_sequence (struct ui_file *file, int from_tty,
@@ -28,7 +28,49 @@ index 1f977d57fba..756c7baa2f8 100644
  compare_sections_command (const char *args, int from_tty)
  {
    asection *s;
-@@ -15025,6 +15035,14 @@ If set, interrupt sequence is sent to remote target."),
+@@ -11057,8 +11067,9 @@ compare_sections_command (const char *args, int from_tty)
+   bfd_vma lma;
+   int matched = 0;
+   int mismatched = 0;
+-  int res;
++  int res = 0;
+   int read_only = 0;
++  int brief = 0;
+ 
+   if (!current_program_space->exec_bfd ())
+     error (_("command cannot be used without an exec file"));
+@@ -11068,6 +11079,11 @@ compare_sections_command (const char *args, int from_tty)
+       read_only = 1;
+       args = NULL;
+     }
++  else if (args != NULL && strcmp (args, "-b") == 0)
++    {
++      brief = 1;
++      args = NULL;
++    }
+ 
+   for (s = current_program_space->exec_bfd ()->sections; s; s = s->next)
+     {
+@@ -11099,6 +11115,9 @@ compare_sections_command (const char *args, int from_tty)
+ 	       paddress (target_gdbarch (), lma),
+ 	       paddress (target_gdbarch (), lma + size));
+ 
++      if (res && brief)
++        continue;
++
+       printf_filtered ("Section %s, range %s -- %s: ", sectname,
+ 		       paddress (target_gdbarch (), lma),
+ 		       paddress (target_gdbarch (), lma + size));
+@@ -11110,6 +11129,8 @@ compare_sections_command (const char *args, int from_tty)
+ 	  mismatched++;
+ 	}
+     }
++  if ((mismatched == 0) && brief)
++    printf_filtered ("sections matched.\n");
+   if (mismatched > 0)
+     warning (_("One or more sections of the target image does not match\n\
+ the loaded file\n"));
+@@ -15025,6 +15046,14 @@ If set, interrupt sequence is sent to remote target."),
  			   NULL, NULL,
  			   &remote_set_cmdlist, &remote_show_cmdlist);
  
@@ -60,7 +102,7 @@ index 0ddf55d19d3..587c178aee3 100644
  
  #define remote_debug_printf(fmt, ...) \
 diff --git a/gdb/symfile.c b/gdb/symfile.c
-index 89469a3d3dc..c9d673367eb 100644
+index 89469a3d3dc..d6dc04e9341 100644
 --- a/gdb/symfile.c
 +++ b/gdb/symfile.c
 @@ -1829,6 +1829,10 @@ load_command (const char *arg, int from_tty)
@@ -70,7 +112,7 @@ index 89469a3d3dc..c9d673367eb 100644
 +
 +  /* optionally check flash */
 +  if (always_compare_sections_after_load())
-+    compare_sections_command(NULL, from_tty);
++    compare_sections_command("-b", from_tty);
  }
  
  /* This version of "load" should be usable for any target.  Currently
