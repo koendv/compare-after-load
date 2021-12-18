@@ -50,4 +50,4 @@ Simply apply the patch, put `set remote compare_sections_after_load on` in your 
 
 `compare-sections` asks the debugger probe to calculate crc checksums of target flash memory, and compares these checksums with the same crc checksums, calculated over the elf binary file. 
 
-This is meaningful if your debugger probe writes a program to target flash when told to do so. This is less meaningful if your debugger probe buffers writes in memory, but pretends to have written your binary to target flash already, and calculates the checksums over the buffered copy of your binary.
+This is meaningful if your debugger probe writes a program to target flash when told to do so. This is less meaningful if your debugger probe buffers writes in memory, pretends to have written your binary to target flash already, and calculates the checksums over the buffered copy of your binary.
