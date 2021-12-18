@@ -20,6 +20,8 @@ warning: One or more sections of the target image does not match the loaded file
 ```
 then you need to investigate.
 
+### Example
+
 An example:
 
 ```
@@ -43,3 +45,9 @@ sections matched.
 ```
 
 Simply apply the patch, put `set remote compare_sections_after_load on` in your .gdbinit, and after every `load` command, `compare_sections` is run automatically.
+
+### Note
+
+`compare-sections` asks the debugger probe to calculate crc checksums of target flash memory, and compares these checksums with the same crc checksums, calculated over the elf binary file. 
+
+This is meaningful if your debugger probe writes a program to target flash when told to do so. This is less meaningful if your debugger probe buffers writes, but pretends to have written your binary to target flash already, and calculates the checksums over the buffered copy of your binary.
